@@ -2,50 +2,72 @@
 
 ## Summary
 
-AeroVeda generates operational event data in the Unity simulator and passes it to the dashboard through JSON artifacts.
+AeroVeda follows a deterministic training loop: simulation produces telemetry, telemetry becomes a session record, and the dashboard consumes that record for review and analytics.
 
-## Flow
+## Core flow
 
-1. The simulator starts a training session.
-2. Threats, sensors, and operator inputs are processed during execution.
-3. Events and telemetry are serialized into structured JSON.
-4. Session artifacts are written to the shared data pipeline.
-5. The Streamlit dashboard reads the data for analysis and review.
+```text
+Mission Start
+   ↓
+ScenarioDefinition loaded
+   ↓
+ThreatEntity spawned
+   ↓
+Detect Threat
+   ↓
+Classify Threat
+   ↓
+Select Response
+   ↓
+Adjudication and scoring
+   ↓
+SessionRecord JSON
+   ↓
+AAR and dashboard reporting
+```
 
-## Data classes
+## Data objects
 
-- Session record
-- Scenario definition
-- Threat definitions
-- Scoring outcomes
-- Export bundle metadata
-- Annotation records
+### ScenarioDefinition
+Stores scenario metadata, environment, objective, threat composition, and rules.
+
+### ThreatDefinition
+Defines a threat’s identity, category, behavior, and scoring profile.
+
+### SessionRecord
+Captures:
+- session ID
+- scenario ID
+- operator ID
+- threat type
+- detection time
+- classification
+- response choice
+- score
+- event timeline
+
+### AARSummary
+Contains the final mission summary, mistakes, and rule-based recommendations.
 
 ## Storage boundaries
 
 ```text
-simulator/unity     → produces session logs and scenario events
-shared/contracts    → defines the data model
-platform/data       → stores exported results and consumption artifacts
-dashboard/streamlit → reads, validates, visualizes, and reports on data
+simulator/unity     -> produces runtime events and session artifacts
+shared/contracts    -> defines the canonical data model
+platform/data       -> stores exported sessions and training outputs
+dashboard/streamlit -> reads, validates, and visualizes session records
 ```
 
-## Recommended data lifecycle
+## Execution path
 
-```text
-Scenario launch
-   ↓
-Simulation run
-   ↓
-Telemetry export
-   ↓
-Schema validation
-   ↓
-Dashboard ingestion
-   ↓
-AAR and analytics output
-```
+1. Scenario starts in Unity.
+2. Threats are created from ScriptableObjects.
+3. Player actions are recorded as events.
+4. The scoring system computes detection and response quality.
+5. SessionRecord is serialized to JSON.
+6. Dashboard loads and validates the JSON.
+7. AAR and analytics are generated using deterministic rule logic.
 
 ## Design intent
 
-This keeps the core product simple and practical: no over-engineered service layer, just a product-grade simulation-to-dashboard flow that is easy to package and demo.
+The purpose is to keep the product understandable and deployable while still enabling feature growth. The data model should remain the single source of truth between simulation and review.

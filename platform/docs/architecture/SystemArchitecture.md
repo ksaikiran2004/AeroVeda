@@ -2,66 +2,171 @@
 
 ## Overview
 
-AeroVeda is built as a desktop training platform with a clean separation between simulation, data exchange, and analysis.
+AeroVeda is designed as a modular desktop training product. It combines a Unity simulator, a shared contract layer, and a Streamlit dashboard into a single training workflow.
 
-The system has three major layers:
+The architecture is intentionally split by responsibility so that the project can evolve from an MVP into a full training system without a rewrite.
 
-1. Simulation Layer — Unity-based operational training environment
-2. Data and Contract Layer — JSON definitions, session records, and shared schemas
-3. Analysis Layer — Streamlit dashboard for ingestion, metrics, AAR, and reporting
+## Architectural layers
 
-## Primary architecture flow
+### 1. Simulation layer
+The Unity simulation layer handles:
+- scenario execution
+- entity lifecycle
+- threat behavior
+- operator actions
+- scoring operations
+- telemetry export
+
+### 2. Content and contract layer
+The shared layer defines:
+- threat definitions
+- scenario definitions
+- score definitions
+- session schema
+- entity metadata
+- future expansion modules
+
+### 3. Analysis and review layer
+The dashboard layer reads exported session records and provides:
+- mission summary
+- analytics
+- competency tracking
+- reporting
+- AAR generation
+
+## Recommended repository placement
+
+```text
+AeroVeda/
+├── simulator/
+│   └── unity/
+├── dashboard/
+│   └── streamlit/
+├── shared/
+│   ├── contracts/
+│   ├── schemas/
+│   ├── threat_library/
+│   ├── entity_definitions/
+│   └── future_modules/
+├── platform/
+│   ├── docs/
+│   ├── data/
+│   ├── deployment/
+│   └── tests/
+└── README.md
+```
+
+## Core module architecture
+
+The simulator should be built as modular systems rather than as a single scene script:
+
+```text
+AeroVeda.Core
+├── CompositionRoot
+├── SimulationContext
+├── EventBus
+├── GameBootstrapper
+├── AppLifecycle
+└── Managers/
+    ├── ScenarioManager
+    ├── ThreatManager
+    ├── ScoringManager
+    ├── SessionRecorder
+    └── AARBuilder
+```
+
+## Class hierarchy
+
+```text
+MonoBehaviour
+└── BaseEntity
+    ├── FriendlyEntity
+    ├── ThreatEntity
+    ├── SensorEntity
+    └── EnvironmentEntity
+
+ScriptableObject
+├── ThreatDefinition
+├── ScenarioDefinition
+├── DifficultyProfile
+├── ResponseRule
+└── TrainingObjective
+```
+
+## Interfaces and modularity
+
+Use interfaces where appropriate for:
+- event communication
+- scenario loading
+- threat generation
+- score adjudication
+- session export
+- AAR creation
+
+Examples:
+- IEventBus
+- IScenarioManager
+- IThreatLibrary
+- IScoringManager
+- ISessionExporter
+- IAARBuilder
+
+This prevents tight coupling between gameplay logic and data/reporting logic.
+
+## Training loop
+
+```text
+Mission Start
+   ↓
+Threat Appears
+   ↓
+User Detects Threat
+   ↓
+User Classifies Threat
+   ↓
+User Selects Response
+   ↓
+Scoring and Adjudication
+   ↓
+Session Record Export
+   ↓
+After Action Review
+```
+
+## Data flow
 
 ```text
 Unity Simulator
    ↓
-Session JSON Logs
+Telemetry + events + actions
    ↓
-Shared Contracts / Threat Library
+SessionRecord JSON
    ↓
-Streamlit Dashboard
+Shared contracts / schema validation
    ↓
-AAR + Analytics + Review
+Streamlit dashboard
+   ↓
+AAR, analytics, recommendations
 ```
 
-## Responsibility split
+## MVP implementation order
 
-### Simulator
-The simulator manages:
-- scenario execution
-- threat behavior
-- environment state
-- operator actions
-- scoring events
-- telemetry capture
+The implementation order should be:
+1. Core architecture
+2. Entity system
+3. Threat definition system
+4. SessionRecord schema
+5. Scenario manager
+6. Detection and classification workflow
+7. Response logic
+8. Scoring engine
+9. Session export and AAR generation
+10. Dashboard ingestion
 
-### Shared model
-The shared layer defines contracts that all systems depend on:
-- scenario definition
-- session record
-- scoring outcomes
-- threat definitions
-- entity metadata
+## Product principles
 
-### Dashboard
-The dashboard is responsible for:
-- ingesting exported session data
-- validating session integrity
-- showing training analytics
-- generating AAR views
-- summarizing operator performance
-
-## Node responsibilities
-
-- `simulator/unity` owns runtime simulation logic.
-- `shared` owns data model definitions and scenario assets.
-- `dashboard/streamlit` owns introspection and review workflows.
-- `platform` owns deployment, validation, packaging, and documentation.
-
-## Design principles
-
-- Keep simulator and dashboard loosely coupled.
-- Use JSON as the interoperability format.
-- Prefer shared definitions over duplicated logic.
-- Treat architecture and contracts as source-of-truth artifacts.
-- Keep the project deployable on standard desktop systems.
+- Keep the simulator and dashboard loosely coupled.
+- Use JSON session records as the interoperability layer.
+- Prefer shared content definitions and rule-based evaluation.
+- Keep the architecture ready for expansion into surveillance, interception, swarm defense, and border security scenarios.
+- Do not add cloud or microservice complexity before the product loop is validated.

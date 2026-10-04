@@ -1,38 +1,120 @@
 # AeroVeda
 
-AI-enabled military training platform for drone threat detection, classification, engagement decision-making, and after-action review.
+AeroVeda is an AI-enabled drone and counter-drone training platform designed for realistic threat detection, response simulation, and after-action review.
 
-## Architecture split
+## Product goal
 
-This repository is organized by responsibility rather than by language alone:
+The project is designed around a desktop-first workflow:
 
-- `backend/` — runtime simulation engine and game systems
-- `frontend/` — user-facing dashboard and review tools
-- `shared/` — contract schemas, fixtures, and shared definitions
-- `platform/` — CI, scripts, docs, tests, and sample content
+1. Unity simulator runs a mission or scenario.
+2. Threat events and operator actions are recorded.
+3. Structured JSON session records are exported.
+4. Streamlit dashboard ingests the session data.
+5. Analytics, scored outcomes, and AAR are generated.
 
-## Repository layout
+This is the product foundation for the final architecture, not a throwaway prototype.
+
+## Repository structure
 
 ```text
 AeroVeda/
-├── backend/
-│   └── simulator/
-├── frontend/
-│   └── dashboard/
+├── simulator/
+│   └── unity/
+│       └── Assets/
+│           └── AeroVeda/
+├── dashboard/
+│   └── streamlit/
 ├── shared/
+│   ├── contracts/
+│   ├── schemas/
+│   ├── threat_library/
+│   ├── entity_definitions/
+│   ├── fixtures/
+│   └── future_modules/
 ├── platform/
-│   ├── .github/
 │   ├── docs/
+│   ├── data/
+│   ├── deployment/
 │   ├── scripts/
-│   ├── tests/
-│   └── samples/
+│   ├── samples/
+│   └── tests/
+├── .github/
 ├── README.md
-└── LICENSE
+├── LICENSE
+└── .gitignore
 ```
 
-## Design intent
+## System architecture
 
-- Frontend handles presentation, analytics, and reporting.
-- Backend handles the simulator and runtime logic.
-- Shared holds contract-level source-of-truth definitions.
-- Platform owns build, validation, docs, and operations.
+### Simulation layer
+Unity owns the runtime simulation and interaction logic:
+- mission execution
+- threat spawning
+- detection actions
+- classification flow
+- response selection
+- scoring and telemetry export
+
+### Shared contract layer
+The shared layer owns the source-of-truth data model:
+- scenario definitions
+- threat definitions
+- scoring contracts
+- session record schema
+- entity metadata
+
+### Analysis layer
+The Streamlit dashboard consumes captured JSON to provide:
+- AAR and mission summary
+- performance analytics
+- training progression views
+- reporting and annotation tools
+
+## Training loop
+
+```text
+Mission Start
+   ↓
+Threat Appears
+   ↓
+User Detects Threat
+   ↓
+User Classifies Threat
+   ↓
+User Selects Response
+   ↓
+Scoring and Adjudication
+   ↓
+Session Record Generated
+   ↓
+After Action Review
+```
+
+## MVP scope
+
+The current MVP focuses on the following user-facing capabilities:
+- Counter-UAS operations
+- protocol and mission training
+- detection/classification/response workflow
+- scoring and final score generation
+- JSON session record export
+- AAR generation based on deterministic rules
+
+## Future expansion
+
+The architecture supports future modules such as:
+- Surveillance missions
+- Interceptor operations
+- Border security
+- Counter-terror operations
+- Swarm defense
+- adaptive difficulty progression
+
+## Design principles
+
+- Use Unity 2022 LTS.
+- Favor modular architecture over monolithic scripts.
+- Keep interfaces and domain boundaries explicit.
+- Use ScriptableObjects for reusable definitions.
+- Generate JSON for interoperability.
+- Design for future expansion rather than a throwaway demo.
