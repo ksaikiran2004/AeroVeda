@@ -163,10 +163,32 @@ The implementation order should be:
 9. Session export and AAR generation
 10. Dashboard ingestion
 
+## SIH execution strategy
+
+For a hackathon/demo timeline, the team should work in parallel on two tracks:
+
+### Track A: visible demo
+- main dashboard
+- training module UI
+- threat library views
+- AAR screens
+- analytics screens
+
+### Track B: product logic
+- core architecture
+- entity system
+- threat system
+- session record generation
+- scoring and adjudication
+
+This parallelism is valid for SIH because the visible product can be advanced at the same time as the underlying subsystem logic, provided the shared contracts remain authoritative.
+
 ## Product principles
 
 - Keep the simulator and dashboard loosely coupled.
 - Use JSON session records as the interoperability layer.
 - Prefer shared content definitions and rule-based evaluation.
+- Treat `ThreatDefinition`, `ScenarioDefinition`, and `SessionRecord` as the contract backbone of the product.
 - Keep the architecture ready for expansion into surveillance, interception, swarm defense, and border security scenarios.
 - Do not add cloud or microservice complexity before the product loop is validated.
+- Build the visible product in parallel with the core engine for SIH/demo readiness, but never let UI work bypass the data-contract foundation.

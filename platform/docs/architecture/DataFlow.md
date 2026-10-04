@@ -68,6 +68,15 @@ dashboard/streamlit -> reads, validates, and visualizes session records
 6. Dashboard loads and validates the JSON.
 7. AAR and analytics are generated using deterministic rule logic.
 
+## Contract-first design
+
+The architecture depends on the following shared definitions:
+- `ThreatDefinition` for all threat types
+- `ScenarioDefinition` for mission setup
+- `SessionRecord` as the exported outcome
+
+This ensures future threats and scenarios can be added without rewriting logic.
+
 ## Design intent
 
 The purpose is to keep the product understandable and deployable while still enabling feature growth. The data model should remain the single source of truth between simulation and review.
