@@ -63,6 +63,7 @@ def build_demo_record() -> dict:
     end_time = start_time + timedelta(minutes=3, seconds=40)
 
     threat_label = "FPV Drone"
+    recommended_response = "Jam"
     sensor_quality = 0.9
     operator_alertness = 0.8
     range_to_threat = 220.0
@@ -70,21 +71,39 @@ def build_demo_record() -> dict:
     classification_label, is_hostile, classification_confidence = classify_threat(
         threat_label, detection_confidence, observer_confirmed=True, radar_confirmed=True
     )
-    response = select_response(threat_label, is_hostile, time_to_impact=12.0)
-    score, success, summary = adjudicate(detection_confidence, classification_confidence, response)
+    selected_response = select_response(threat_label, is_hostile, time_to_impact=12.0)
+    score, success, summary = adjudicate(detection_confidence, classification_confidence, selected_response)
+    classification_correct = classification_label == "Hostile FPV drone"
+    response_correct = selected_response == recommended_response
+    breakdown = {
+        "detection": 35,
+        "classification": 30,
+        "response": 25,
+        "protocol": 10,
+    }
 
-    return {
+    record = {
         "sessionId": "sess-urban-day-demo-001",
         "scenarioId": SCENARIO_ID,
         "operatorId": "ops-demo",
         "startTimeUtc": start_time.isoformat().replace("+00:00", "Z"),
         "endTimeUtc": end_time.isoformat().replace("+00:00", "Z"),
         "status": "Completed" if success else "NeedsReview",
+        "actualThreatType": threat_label,
+        "classifiedThreatType": threat_label,
+        "classificationCorrect": classification_correct,
+        "recommendedResponse": recommended_response,
+        "selectedResponse": selected_response,
+        "responseCorrect": response_correct,
+        "difficultyLevel": "Easy",
+        "scenarioEnvironment": "Urban Day",
+        "trainingRecommendation": "Continue FPV engagement drills.",
         "threatType": threat_label,
         "detectionTimeSeconds": round(detection_time, 2),
         "classification": classification_label,
-        "response": response,
+        "response": selected_response,
         "finalScore": round(score, 4),
+        "scoreBreakdown": breakdown,
         "events": [
             {
                 "timestampUtc": start_time.isoformat().replace("+00:00", "Z"),
@@ -114,6 +133,8 @@ def build_demo_record() -> dict:
         ],
     }
 
+    return record
+
 
 def main() -> None:
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -121,6 +142,7 @@ def main() -> None:
     OUTPUT_PATH.write_text(json.dumps(record, indent=2), encoding="utf-8")
     print(f"Exported demo session record to {OUTPUT_PATH}")
     print(f"Final score: {record['finalScore']} | status: {record['status']}")
+    print(f"Classification correct: {record['classificationCorrect']} | response correct: {record['responseCorrect']}")
 
 
 if __name__ == "__main__":

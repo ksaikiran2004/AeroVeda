@@ -12,13 +12,36 @@ public sealed class SessionRecord
     public DateTime StartTimeUtc;
     public DateTime EndTimeUtc;
     public string Status;
+
+    public string ActualThreatType;
+    public string ClassifiedThreatType;
+    public bool ClassificationCorrect;
+
+    public string RecommendedResponse;
+    public string SelectedResponse;
+    public bool ResponseCorrect;
+
+    public string DifficultyLevel;
+    public string ScenarioEnvironment;
+    public string TrainingRecommendation;
+
     public string ThreatType;
     public float DetectionTimeSeconds;
     public string Classification;
     public string Response;
     public float FinalScore;
+    public SessionScoreBreakdown ScoreBreakdown;
 
     public List<SessionEvent> Events = new();
+}
+
+[Serializable]
+public sealed class SessionScoreBreakdown
+{
+    public float Detection;
+    public float Classification;
+    public float Response;
+    public float Protocol;
 }
 
 [Serializable]

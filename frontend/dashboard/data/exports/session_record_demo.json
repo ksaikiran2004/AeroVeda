@@ -5,11 +5,26 @@
   "startTimeUtc": "2026-10-04T09:00:00Z",
   "endTimeUtc": "2026-10-04T09:03:40Z",
   "status": "Completed",
+  "actualThreatType": "FPV Drone",
+  "classifiedThreatType": "FPV Drone",
+  "classificationCorrect": true,
+  "recommendedResponse": "Jam",
+  "selectedResponse": "Jam",
+  "responseCorrect": true,
+  "difficultyLevel": "Easy",
+  "scenarioEnvironment": "Urban Day",
+  "trainingRecommendation": "Continue FPV engagement drills.",
   "threatType": "FPV Drone",
   "detectionTimeSeconds": 2.46,
   "classification": "Hostile FPV drone",
   "response": "Jam",
   "finalScore": 0.9038,
+  "scoreBreakdown": {
+    "detection": 35,
+    "classification": 30,
+    "response": 25,
+    "protocol": 10
+  },
   "events": [
     {
       "timestampUtc": "2026-10-04T09:00:00Z",
