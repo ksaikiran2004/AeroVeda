@@ -1,7 +1,2 @@
----
-Owner: TBD
-Status: Placeholder
-Last-reviewed: 2026-10-04
----
-
-This is a placeholder document.
+streamlit>=1.35.0
+pandas>=2.0.0

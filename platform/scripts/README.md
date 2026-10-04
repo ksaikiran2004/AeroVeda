@@ -19,5 +19,5 @@ python3 platform/scripts/headless/run_session_export.py
 The output is written to:
 
 ```text
-frontend/dashboard/data/exports/session_record_demo.json
+dashboard/streamlit/data/exports/session_record_demo.json
 ```

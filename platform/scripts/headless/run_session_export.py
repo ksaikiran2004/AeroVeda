@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 SCENARIO_ID = "urban-day-counter-uav"
-OUTPUT_PATH = Path("frontend/dashboard/data/exports/session_record_demo.json")
+OUTPUT_PATH = Path("dashboard/streamlit/data/exports/session_record_demo.json")
 
 
 def compute_detection(sensor_quality: float, operator_alertness: float, range_to_threat: float) -> tuple[float, bool, float]:
