@@ -10,7 +10,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 if str(REPOSITORY_ROOT) not in sys.path:
 	sys.path.insert(0, str(REPOSITORY_ROOT))
 
-from dashboard.streamlit import command_center
+from dashboard.streamlit import command_center, command_landing
 
 
 st.set_page_config(
@@ -23,6 +23,7 @@ st.set_page_config(
 command_center.inject_theme()
 
 routes = {
+	"Command Center": (command_landing.render_command_center, "home_app_logo"),
 	"Mission Control": (command_center.render_mission_control, "radar"),
 	"Threat Detection": (command_center.render_threat_detection, "sensors"),
 	"Threat Classification": (command_center.render_threat_classification, "target"),
@@ -37,10 +38,11 @@ pages = {
 		render,
 		title=title,
 		icon=f":material/{icon}:",
-		default=title == "Mission Control",
+		default=title == "Command Center",
 	)
 	for title, (render, icon) in routes.items()
 }
+command_landing.bind_pages(pages)
 active_page = st.navigation(list(pages.values()), position="hidden")
 
 record = command_center.load_session_record()

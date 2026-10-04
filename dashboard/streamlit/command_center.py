@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import base64
 import html
 import json
 from contextlib import contextmanager
@@ -12,6 +13,12 @@ import streamlit as st
 
 
 DATA_FILE = Path(__file__).resolve().parent / "data" / "exports" / "session_record_demo.json"
+LOGO_FILE = Path(__file__).resolve().parents[1] / "AV_Logo.png"
+LOGO_DATA_URI = (
+	"data:image/png;base64," + base64.b64encode(LOGO_FILE.read_bytes()).decode("ascii")
+	if LOGO_FILE.exists()
+	else ""
+)
 
 
 def load_session_record() -> dict[str, Any]:
@@ -89,13 +96,15 @@ def inject_theme() -> None:
 			border-bottom: 1px solid var(--line);
 			margin-bottom: 1.1rem;
 		}
-		.brand-line { display: flex; align-items: center; gap: .6rem; }
+		.brand-line { display: flex; align-items: center; gap: .55rem; min-width: 0; }
+		.brand-logo-img { display: block; width: 3.7rem; height: 3.7rem; flex: none; object-fit: contain; filter: drop-shadow(0 0 9px rgba(114,255,145,.2)); }
 		.brand-mark {
 			width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
 			border: 1px solid var(--green); color: var(--green); border-radius: 50%;
 			font: 700 1rem var(--mono); box-shadow: 0 0 16px rgba(114,255,145,.18);
 		}
-		.brand-name { color: var(--green); font: 700 1.45rem var(--display); letter-spacing: .08em; }
+		.brand-name { color: var(--green); font: 700 1.22rem var(--display); letter-spacing: .065em; white-space: nowrap; }
+		.brand-letter { display: inline-block; color: var(--amber); font-size: 1.35em; line-height: .82; vertical-align: -.06em; text-shadow: 0 0 10px rgba(255,196,92,.42); }
 		.brand-sub { color: #8da695; font: 500 .57rem var(--mono); letter-spacing: .1em; line-height: 1.5; margin-top: .35rem; }
 		.nav-kicker, .eyebrow { color: var(--green); font: 600 .66rem var(--mono); letter-spacing: .16em; text-transform: uppercase; }
 		[data-testid="stSidebar"] [data-testid="stRadio"] > label { display: none; }
@@ -265,10 +274,15 @@ def inject_theme() -> None:
 
 def render_sidebar_brand(active_page: Any, page_map: dict[str, Any]) -> None:
 	with st.sidebar:
+		logo_markup = (
+			f'<img class="brand-logo-img" src="{LOGO_DATA_URI}" alt="AeroVeda crest">'
+			if LOGO_DATA_URI
+			else '<div class="brand-mark">AV</div>'
+		)
 		st.markdown(
-			"""
+			f"""
 			<div class="sidebar-brand">
-				<div class="brand-line"><div class="brand-mark">AV</div><div class="brand-name">AEROVEDA</div></div>
+				<div class="brand-line">{logo_markup}<div class="brand-name"><span class="brand-letter">A</span>ERO<span class="brand-letter">V</span>EDA</div></div>
 				<div class="brand-sub">AI-ENABLED COUNTER-UAS<br>TRAINING PLATFORM</div>
 			</div>
 			<div class="nav-kicker">Command Navigation</div>
@@ -366,38 +380,6 @@ def render_event_stream(record: dict[str, Any], limit: int | None = None) -> Non
 	st.markdown(f'<div class="event-stream">{"".join(items)}</div>', unsafe_allow_html=True)
 
 
-def render_tactical_map(record: dict[str, Any]) -> None:
-	threat_name = escape(record.get("actualThreatType", "THREAT TRACK"))
-	st.markdown(
-		f"""
-		<div class="map-frame">
-			<div class="map-topline"><span>TACTICAL PICTURE / {escape(record.get('scenarioId', 'SESSION'))}</span><span class="map-state">SCHEMATIC / NO GPS TELEMETRY</span></div>
-			<div class="map-surface">
-				<div class="map-contour contour-a"></div><div class="map-contour contour-b"></div><div class="map-contour contour-c"></div>
-				<div class="map-crosshair"></div><div class="map-crosshair horizontal"></div>
-				<div class="radar-ring"></div><div class="radar-sweep"></div>
-				<span class="map-coordinate coord-nw">GRID 00 / NOT GEOREFERENCED</span>
-				<span class="map-coordinate coord-se">SCHEMATIC DISPLAY ONLY</span>
-				<svg class="map-path" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
-					<path class="axis" d="M480 0 V600 M0 288 H1000" />
-					<path d="M690 190 C650 240 605 250 555 285 S485 305 425 330" />
-				</svg>
-				<div class="map-marker marker-hostile"><div class="symbol"><span>!</span></div>{threat_name}</div>
-				<div class="map-marker marker-sensor"><div class="symbol">+</div>SENSOR NODE</div>
-				<div class="map-marker marker-asset"><div class="symbol">A</div>PROTECTED ASSET</div>
-			</div>
-			<div class="map-legend">
-				<span class="legend-item"><i class="legend-dot dot-red"></i>HOSTILE TRACK</span>
-				<span class="legend-item"><i class="legend-dot dot-cyan"></i>SENSOR NODE</span>
-				<span class="legend-item"><i class="legend-dot dot-green"></i>PROTECTED ASSET</span>
-				<span class="legend-item"><i class="legend-dot dot-ring"></i>DETECTION ZONE (SCHEMATIC)</span>
-			</div>
-		</div>
-		""",
-		unsafe_allow_html=True,
-	)
-
-
 def render_live_threat(record: dict[str, Any]) -> None:
 	completion = get_event(record, "MissionCompleted")
 	status = "NEUTRALIZED / REPORTED" if completion else "TRACK STATUS NOT RECORDED"
@@ -431,15 +413,9 @@ def render_live_threat(record: dict[str, Any]) -> None:
 
 
 def render_mission_control() -> None:
-	record = load_session_record()
-	page_heading("Mission Control", "Operations Picture", f"SESSION // {record.get('sessionId', 'N/A')}")
-	map_col, feed_col = st.columns([2.45, 1], gap="medium")
-	with map_col:
-		render_tactical_map(record)
-	with feed_col:
-		render_live_threat(record)
-	with tactical_panel("Mission Events Stream", "UTC / SESSION RECORD"):
-		render_event_stream(record, limit=5)
+	from dashboard.streamlit.mission_control import render_mission_control as render_view
+
+	render_view()
 
 
 def render_threat_detection() -> None:
