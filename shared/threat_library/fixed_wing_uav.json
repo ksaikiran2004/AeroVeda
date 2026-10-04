@@ -1,0 +1,13 @@
+{
+  "id": "fixed_wing_uav",
+  "name": "Fixed Wing UAV",
+  "category": "uav",
+  "threatLevel": "medium",
+  "behavior": "surveillance",
+  "flightProfile": "high-altitude-loiter",
+  "detectionHints": [
+    "long range silhouette",
+    "persistent route tracking",
+    "elevated line-of-sight"
+  ]
+}

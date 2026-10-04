@@ -1,0 +1,13 @@
+{
+  "id": "unknown_uas",
+  "name": "Unknown UAS",
+  "category": "unknown",
+  "threatLevel": "medium",
+  "behavior": "unclassified",
+  "flightProfile": "uncertain",
+  "detectionHints": [
+    "unknown signature",
+    "jittering telemetry",
+    "limited classification confidence"
+  ]
+}

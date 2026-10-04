@@ -1,0 +1,19 @@
+{
+  "name": "AeroVeda.Presentation",
+  "references": [
+    "AeroVeda.Common",
+    "AeroVeda.Content",
+    "AeroVeda.Views.Picture"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

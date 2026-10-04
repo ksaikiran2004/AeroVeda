@@ -1,0 +1,10 @@
+{
+  "schema": "scenario_definition.v1",
+  "scenarioId": "example-scenario",
+  "name": "Example Scenario",
+  "difficulty": "medium",
+  "environment": "urban",
+  "objective": "Detect and classify unauthorized drone activity",
+  "threats": [],
+  "rules": []
+}

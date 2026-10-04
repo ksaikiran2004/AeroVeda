@@ -1,0 +1,13 @@
+{
+  "id": "fpv_attack_drone",
+  "name": "FPV Attack Drone",
+  "category": "drone",
+  "threatLevel": "high",
+  "behavior": "assault",
+  "flightProfile": "rapid-approach",
+  "detectionHints": [
+    "high-speed maneuvering",
+    "low-altitude approach",
+    "rapid target lock"
+  ]
+}

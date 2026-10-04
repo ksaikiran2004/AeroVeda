@@ -1,0 +1,13 @@
+{
+  "id": "swarm_node",
+  "name": "Swarm Node",
+  "category": "swarm",
+  "threatLevel": "high",
+  "behavior": "coordinated",
+  "flightProfile": "multi-agent-formation",
+  "detectionHints": [
+    "distributed movement",
+    "rapid coordination",
+    "tracking complexity"
+  ]
+}

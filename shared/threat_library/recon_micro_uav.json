@@ -1,0 +1,13 @@
+{
+  "id": "recon_micro_uav",
+  "name": "Recon Micro UAV",
+  "category": "drone",
+  "threatLevel": "low",
+  "behavior": "surveillance",
+  "flightProfile": "low-altitude-loiter",
+  "detectionHints": [
+    "small heat signature",
+    "low-noise propulsion",
+    "short range telemetry burst"
+  ]
+}

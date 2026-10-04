@@ -1,0 +1,8 @@
+{
+  "id": "vehicle",
+  "type": "ground_vehicle",
+  "classification": "civilian",
+  "speed": 12,
+  "maneuverability": "low",
+  "sensorSignature": "medium"
+}

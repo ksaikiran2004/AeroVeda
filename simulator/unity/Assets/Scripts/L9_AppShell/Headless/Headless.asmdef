@@ -1,0 +1,19 @@
+{
+  "name": "AeroVeda.Headless",
+  "references": [
+    "AeroVeda.CompositionRoot",
+    "AeroVeda.Platform",
+    "AeroVeda.App"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

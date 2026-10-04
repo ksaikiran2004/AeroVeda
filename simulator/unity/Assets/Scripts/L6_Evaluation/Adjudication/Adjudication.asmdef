@@ -1,0 +1,20 @@
+{
+  "name": "AeroVeda.Evaluation.Adjudication",
+  "references": [
+    "AeroVeda.Common",
+    "AeroVeda.Content",
+    "AeroVeda.Views.Truth",
+    "AeroVeda.Views.Picture"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

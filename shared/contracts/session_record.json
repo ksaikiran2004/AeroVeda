@@ -1,0 +1,15 @@
+{
+  "schema": "session_record.v1",
+  "sessionId": "example-session-id",
+  "scenarioId": "example-scenario",
+  "operatorId": "operator-001",
+  "startTimeUtc": "2026-10-04T00:00:00Z",
+  "endTimeUtc": "2026-10-04T00:10:00Z",
+  "status": "completed",
+  "threats": [],
+  "events": [],
+  "score": {
+    "total": 0,
+    "breakdown": {}
+  }
+}

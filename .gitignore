@@ -1,0 +1,15 @@
+Library/
+Temp/
+Logs/
+Build/
+[Ll]ibrary/
+[Tt]emp/
+[Ll]ogs/
+*.csproj
+*.unityproj
+*.sln
+*.user
+__pycache__/
+.venv/
+venv/
+.env

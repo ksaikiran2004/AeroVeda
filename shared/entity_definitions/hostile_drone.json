@@ -1,0 +1,8 @@
+{
+  "id": "hostile_drone",
+  "type": "drone",
+  "classification": "hostile",
+  "speed": 18,
+  "maneuverability": "medium",
+  "sensorSignature": "low"
+}

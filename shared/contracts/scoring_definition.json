@@ -1,0 +1,12 @@
+{
+  "schema": "scoring_definition.v1",
+  "scenarioId": "example-scenario",
+  "metricSet": {
+    "detection": 0.4,
+    "classification": 0.3,
+    "responseTiming": 0.2,
+    "decisionQuality": 0.1
+  },
+  "passThreshold": 70,
+  "gradingMode": "weighted_sum"
+}

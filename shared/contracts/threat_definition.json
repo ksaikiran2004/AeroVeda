@@ -1,0 +1,13 @@
+{
+  "schema": "threat_definition.v1",
+  "threatId": "example-threat",
+  "type": "recon_micro_uav",
+  "classification": "hostile",
+  "riskScore": 35,
+  "behaviorProfile": "surveillance",
+  "tags": [
+    "air",
+    "low-altitude",
+    "recon"
+  ]
+}

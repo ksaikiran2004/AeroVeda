@@ -1,0 +1,8 @@
+{
+  "id": "intruder",
+  "type": "person",
+  "classification": "intruder",
+  "speed": 6,
+  "maneuverability": "medium",
+  "sensorSignature": "high"
+}

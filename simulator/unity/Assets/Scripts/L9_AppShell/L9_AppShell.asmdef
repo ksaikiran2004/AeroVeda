@@ -1,0 +1,19 @@
+{
+  "name": "AeroVeda.App",
+  "references": [
+    "AeroVeda.Common",
+    "AeroVeda.Content",
+    "AeroVeda.Platform"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
