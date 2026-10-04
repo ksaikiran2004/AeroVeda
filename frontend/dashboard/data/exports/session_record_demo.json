@@ -1,0 +1,40 @@
+{
+  "sessionId": "sess-urban-day-demo-001",
+  "scenarioId": "urban-day-counter-uav",
+  "operatorId": "ops-demo",
+  "startTimeUtc": "2026-10-04T09:00:00Z",
+  "endTimeUtc": "2026-10-04T09:03:40Z",
+  "status": "Completed",
+  "threatType": "FPV Drone",
+  "detectionTimeSeconds": 2.46,
+  "classification": "Hostile FPV drone",
+  "response": "Jam",
+  "finalScore": 0.9038,
+  "events": [
+    {
+      "timestampUtc": "2026-10-04T09:00:00Z",
+      "eventType": "MissionStarted",
+      "details": "Urban Day Counter-UAS mission initialized."
+    },
+    {
+      "timestampUtc": "2026-10-04T09:00:12Z",
+      "eventType": "ThreatDetected",
+      "details": "Rising FPV signature observed and confirmed by radar."
+    },
+    {
+      "timestampUtc": "2026-10-04T09:00:18Z",
+      "eventType": "ThreatClassified",
+      "details": "Threat classified as hostile FPV attack drone."
+    },
+    {
+      "timestampUtc": "2026-10-04T09:00:24Z",
+      "eventType": "ResponseSelected",
+      "details": "Jam response selected due to short time-to-impact window."
+    },
+    {
+      "timestampUtc": "2026-10-04T09:03:40Z",
+      "eventType": "MissionCompleted",
+      "details": "Threat was accurately detected, classified, and neutralized with an appropriate response."
+    }
+  ]
+}
