@@ -32,10 +32,12 @@ def load_threat_library() -> list[dict[str, Any]]:
 def _switch_page(label: str) -> None:
 	page = PAGE_MAP.get(label)
 	if page is not None:
+		st.session_state["aeroveda_navigation"] = label
 		st.switch_page(page)
 
 
 def _jump_to_event(event_index: int) -> None:
+	st.session_state[mc.SECTOR_KEY] = "Sector ATLAS-5 | Urban Infrastructure"
 	st.session_state[mc.REPLAY_INDEX] = event_index
 	st.session_state[mc.REPLAY_SCRUBBER] = event_index
 	st.session_state[mc.REPLAY_PLAYING] = False
@@ -43,8 +45,9 @@ def _jump_to_event(event_index: int) -> None:
 	_switch_page("Mission Control")
 
 
-def _launch_mission(sector_label: str) -> None:
-	st.session_state[mc.SECTOR_KEY] = sector_label
+def _launch_mission(sector_label: str | None = None) -> None:
+	target_sector = sector_label or st.session_state.get(mc.SECTOR_KEY, "Sector ATLAS-5 | Urban Infrastructure")
+	st.session_state[mc.SECTOR_KEY] = target_sector
 	st.session_state[mc.REPLAY_INDEX] = 0
 	st.session_state[mc.REPLAY_SCRUBBER] = 0
 	st.session_state[mc.REPLAY_PLAYING] = False
@@ -55,24 +58,40 @@ def _launch_mission(sector_label: str) -> None:
 @st.dialog("AeroVeda Threat Library", width="large")
 def show_threat_library() -> None:
 	entries = load_threat_library()
-	st.caption("Shared training definitions / read only")
+	st.caption("Shared training definitions / 5 threat profiles loaded / read only")
 	for threat in entries:
+		threat_level = str(threat.get("threatLevel", "unrated")).upper()
+		level_color = "#ff5269" if threat_level == "HIGH" else ("#ffc45c" if threat_level == "MEDIUM" else "#72ff91")
 		with ui.tactical_panel(
 			threat.get("name", "Unknown Threat"),
-			f"{threat.get('category', 'UNKNOWN')} / {threat.get('threatLevel', 'UNRATED')} THREAT LEVEL",
+			f"{threat.get('category', 'UNKNOWN').upper()} / {threat_level} THREAT LEVEL",
 		):
 			st.markdown(
-				f"**Behavior:** {threat.get('behavior', 'Not recorded')}  "
-				f"**Flight profile:** {threat.get('flightProfile', 'Not recorded')}"
+				f'<div class="threat-meta">'
+				f'<span><strong>BEHAVIOR:</strong> {ui.escape(threat.get("behavior", "Not recorded"))}</span> | '
+				f'<span><strong>FLIGHT PROFILE:</strong> {ui.escape(threat.get("flightProfile", "Not recorded"))}</span> | '
+				f'<span><strong>THREAT LEVEL:</strong> <span style="color:{level_color};font-weight:700">{threat_level}</span></span>'
+				f'</div>',
+				unsafe_allow_html=True,
 			)
 			hints = threat.get("detectionHints", [])
-			st.markdown("Detection cues: " + ", ".join(hints) if hints else "No detection cues recorded.")
+			if hints:
+				hint_chips = " ".join(
+					f'<span class="threat-hint-tag">{ui.escape(hint)}</span>'
+					for hint in hints
+				)
+				st.markdown(f'<div class="threat-hints-wrap"><span class="data-key" style="margin-bottom:.25rem">DETECTION CUES:</span>{hint_chips}</div>', unsafe_allow_html=True)
+			else:
+				st.markdown('<div class="home-map-note">No detection cues recorded.</div>', unsafe_allow_html=True)
 
 
 def inject_landing_styles() -> None:
 	st.markdown(
 		"""
 		<style>
+		@keyframes mc-live { 50% { opacity:.35; box-shadow:0 0 2px #72ff91; } }
+		@keyframes mc-sweep { to { transform:translate(-50%,-50%) rotate(360deg); } }
+		.mc-live-dot { width:.52rem; height:.52rem; flex:none; border-radius:50%; background:#72ff91; box-shadow:0 0 9px #72ff91; animation:mc-live 1.7s ease-in-out infinite; }
 		.home-hero { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.85rem 1rem; margin:.05rem 0 1rem; border:1px solid rgba(114,255,145,.38); border-left:3px solid #72ff91; background:linear-gradient(105deg,rgba(13,34,20,.98),rgba(7,16,10,.96)); }
 		.home-identity { display:flex; align-items:center; gap:.9rem; min-width:0; }
 		.home-logo { width:4.5rem; height:4.5rem; object-fit:contain; filter:drop-shadow(0 0 12px rgba(114,255,145,.2)); }
@@ -94,6 +113,16 @@ def inject_landing_styles() -> None:
 		.home-quick-links [data-testid="stPageLink"] { border:1px solid rgba(105,181,125,.22); background:rgba(8,19,12,.82); padding:.5rem .6rem; min-height:2.8rem; }
 		.home-quick-links [data-testid="stPageLink"]:hover { border-color:#72ff91; background:rgba(32,104,48,.16); }
 		.home-map-note { color:#77917c; font:500 .54rem 'IBM Plex Mono',monospace; letter-spacing:.07em; padding-top:.25rem; }
+		.st-key-command_center_preview_map [data-testid="stPlotlyChart"] { position:relative; overflow:hidden; }
+		.st-key-command_center_preview_map [data-testid="stPlotlyChart"]:after { content:''; position:absolute; z-index:4; pointer-events:none; width:min(58.2%,26.125rem); aspect-ratio:1; left:var(--home-sweep-x,50.6%); top:var(--home-sweep-y,39.3%); transform:translate(-50%,-50%); border-radius:50%; background:conic-gradient(from 0deg, transparent 0deg 315deg, rgba(114,255,145,.015) 330deg, rgba(114,255,145,.2) 358deg, transparent 360deg); animation:mc-sweep 8s linear infinite; }
+		[data-testid="stElementContainer"][class*="st-key-home_event_jump_"] button { width:100%; min-height:2.85rem; padding:.45rem .6rem; white-space:normal; line-height:1.25; border:1px solid rgba(114,255,145,.32); border-left:3px solid #72ff91; background:rgba(10,25,16,.88); color:#72ff91; font:600 .68rem 'IBM Plex Mono',monospace; letter-spacing:.05em; text-align:left; }
+		[data-testid="stElementContainer"][class*="st-key-home_event_jump_"] button:hover { border-color:#72ff91; background:rgba(32,104,48,.25); box-shadow:0 0 12px rgba(114,255,145,.22); color:#effff0; }
+		.home-event-detail { color:#8da695; font:400 .58rem 'IBM Plex Mono',monospace; line-height:1.35; margin-top:.35rem; padding:.3rem .4rem; background:rgba(6,14,9,.6); border:1px solid rgba(105,181,125,.15); min-height:2.4rem; }
+		[data-testid="stElementContainer"][class*="st-key-home_sector_"] button { border:1px solid rgba(105,181,125,.3); background:rgba(12,29,18,.8); color:#72ff91; font:600 .66rem 'IBM Plex Mono',monospace; letter-spacing:.07em; }
+		[data-testid="stElementContainer"][class*="st-key-home_sector_"] button:hover { border-color:#72ff91; background:rgba(28,155,80,.25); box-shadow:0 0 10px rgba(114,255,145,.2); color:#effff0; }
+		.threat-meta { color:#a5bba9; font:500 .62rem 'IBM Plex Mono',monospace; margin-bottom:.55rem; }
+		.threat-hints-wrap { margin-top:.4rem; }
+		.threat-hint-tag { display:inline-block; margin:.15rem .3rem .15rem 0; padding:.2rem .45rem; border:1px solid rgba(89,227,215,.35); background:rgba(89,227,215,.07); color:#59e3d7; font:500 .56rem 'IBM Plex Mono',monospace; border-radius:2px; }
 		@media(max-width:620px) { .home-hero { align-items:flex-start; flex-direction:column; } .home-logo { width:3.7rem; height:3.7rem; } .home-activity { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 		</style>
 		""",
@@ -114,18 +143,31 @@ def _recent_events(record: dict[str, Any]) -> None:
 		st.markdown('<div class="missing-note">NO SESSION EVENTS AVAILABLE</div>', unsafe_allow_html=True)
 		return
 
+	event_icons = {
+		"MissionStarted": ":material/flag:",
+		"ThreatDetected": ":material/sensors:",
+		"ThreatClassified": ":material/target:",
+		"ResponseSelected": ":material/bolt:",
+		"MissionCompleted": ":material/task_alt:",
+	}
 	columns = st.columns(min(5, len(events)), gap="small")
 	for event_index, event in enumerate(events):
 		with columns[event_index % len(columns)]:
-			event_name = mc._event_label(event.get("eventType", "EVENT"))
+			event_type = event.get("eventType", "EVENT")
+			event_name = mc._event_label(event_type)
+			icon = event_icons.get(event_type, ":material/timeline:")
 			st.caption(event.get("timestampUtc", "TIME NOT RECORDED").split("T")[-1].replace("Z", " Z"))
 			st.button(
 				event_name,
 				key=f"home_event_jump_{event_index}",
-				help=event.get("details", "Jump to this recorded event in mission replay."),
+				icon=icon,
 				use_container_width=True,
 				on_click=_jump_to_event,
 				args=(event_index,),
+			)
+			st.markdown(
+				f'<div class="home-event-detail">{ui.escape(event.get("details", ""))}</div>',
+				unsafe_allow_html=True,
 			)
 
 
@@ -170,6 +212,19 @@ def render_command_center() -> None:
 	sector = mc.SECTORS[sector_label]
 	with main_map:
 		with ui.tactical_panel("Active Training Area", f"{sector['code']} / FICTIONAL SIM GRID"):
+			sweep_sensor = sector["sensors"][1]
+			sensor_x, sensor_y = sweep_sensor[1], sweep_sensor[2]
+			desktop_sweep_x = 50.6 + (sensor_x - 51) * .582
+			desktop_sweep_y = 39.3 - (sensor_y - 51) * .746
+			mobile_sweep_x = 59.6 + (sensor_x - 51) * .709
+			mobile_sweep_y = 33.5 - (sensor_y - 51) * .379
+			st.markdown(
+				f'<style>.st-key-command_center_preview_map {{'
+				f'--home-sweep-x:{desktop_sweep_x:.2f}%;--home-sweep-y:{desktop_sweep_y:.2f}%;'
+				f'--home-sweep-mobile-x:{mobile_sweep_x:.2f}%;--home-sweep-mobile-y:{mobile_sweep_y:.2f}%;'
+				'</style>',
+				unsafe_allow_html=True,
+			)
 			preview_index = min(max(1, len(events) - 1), 1) if events else 0
 			figure = mc.build_operations_map(sector, set(mc.MAP_LAYERS), events, preview_index)
 			st.plotly_chart(
@@ -226,6 +281,7 @@ def render_command_center() -> None:
 					st.button(
 						"OPEN SECTOR",
 						key=f"home_sector_{details['code']}",
+						icon=":material/travel_explore:",
 						use_container_width=True,
 						on_click=_launch_mission,
 						args=(label,),
@@ -260,7 +316,6 @@ def render_command_center() -> None:
 				icon=":material/rocket_launch:",
 				use_container_width=True,
 				on_click=_launch_mission,
-				args=(st.session_state[mc.SECTOR_KEY],),
 			)
 
 	with ui.tactical_panel("Quick Access Modules", "OPERATIONAL WORKSPACES"):
@@ -278,8 +333,10 @@ def render_command_center() -> None:
 		for link_index, (label, icon) in enumerate(quick_links):
 			with link_columns[link_index % len(link_columns)]:
 				st.page_link(PAGE_MAP[label], label=label, icon=f":material/{icon}:")
-		library_col, analytics_col = st.columns([1, 2], gap="small")
+		library_col, analytics_col, instructor_col = st.columns([1.2, 1.4, 1.4], gap="small")
 		with library_col:
 			st.button("THREAT LIBRARY / 5 DEFINITIONS", key="home_threat_library", icon=":material/menu_book:", use_container_width=True, on_click=show_threat_library)
 		with analytics_col:
 			st.page_link(PAGE_MAP["Competency Assessment"], label="OPEN PERFORMANCE ANALYTICS", icon=":material/monitoring:")
+		with instructor_col:
+			st.page_link(PAGE_MAP["Instructor Console"], label="INSTRUCTOR CONSOLE ACCESS", icon=":material/school:")
