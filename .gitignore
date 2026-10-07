@@ -1,15 +1,68 @@
-Library/
-Temp/
-Logs/
-Build/
+# Unity generated data
 [Ll]ibrary/
 [Tt]emp/
+[Oo]bj/
 [Ll]ogs/
+[Mm]emoryCaptures/
+[Uu]ser[Ss]ettings/
+
+# Unity build output; keep platform/scripts/build source files visible
+/Build/
+/Builds/
+simulator/unity/[Bb]uild/
+simulator/unity/[Bb]uilds/
+
+# IDE and Unity generated solution files
 *.csproj
 *.unityproj
 *.sln
+*.slnx
+*.suo
 *.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+.vs/
+.idea/
+.vscode/
+.gradle/
+
+# Unity Version Control / Plastic SCM
+.plastic/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python caches and local environments
 __pycache__/
+*.py[cod]
 .venv/
 venv/
+env/
 .env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Python build outputs at the repository root
+/build/
+/dist/
+
+# The canonical Unity project is under simulator/unity; retain this partial
+# root-level copy locally without adding it as a second project.
+/Assets/
+/Packages/
+/ProjectSettings/
